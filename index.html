@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+</head>
+<body>
+
+
+    <script>
+        const token = 'BQDS_RLCi4s9m9tWChwQkOVCvnBp8vdqUsvPIT1vdGUydOQCWvouECI_l-FpnM-eECUG5Cwhxk63HwMtPADngb75cDt0LNHEEfQoi0E1yYCcJjI8uAf__4z3KU0QQcTpGE8zVGd-BgoBh7iMzeftjRiK-eiVU1HJcZaJ17OCmN5Y0PLZDBiBnYKxfkPhKTEgTfQIw0svrfMwmWGmlKVHrHqj0_LitWvr'; // Replace with your actual access token
+
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            const player = new Spotify.Player({
+                name: 'Web Playback SDK',
+                getOAuthToken: cb => { cb(token); }
+            });
+
+   
+            player.addListener('initialization_error', ({ message }) => { console.error(message); });
+            player.addListener('authentication_error', ({ message }) => { console.error(message); });
+            player.addListener('account_error', ({ message }) => { console.error(message); });
+            player.addListener('playback_error', ({ message }) => { console.error(message); });
+
+            
+            player.addListener('ready', ({ device_id }) => {
+                console.log('Ready with Device ID', device_id);
+                
+          
+                setTimeout(() => {
+                    player._options.getOAuthToken(access_token => {
+                        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
+                            method: 'PUT',
+                            body: JSON.stringify({ uris: ['https://open.spotify.com/track/7nUnUd9GCN2bUwzsMjljGe?si=c89f2de3f75c4cf1'] }), //here is the song link
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${access_token}`
+                            },
+                        });
+                    });
+                }, 2000);
+            });
+
+            
+            player.connect();
+        };
+    </script>
+</body>
+</html>
